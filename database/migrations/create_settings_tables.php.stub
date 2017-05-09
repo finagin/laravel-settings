@@ -1,0 +1,60 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class CreateSettingsTables extends Migration
+{
+    protected $names = [];
+    protected $prefix = '';
+
+    public function __construct()
+    {
+        $tablePrefix = config('laravel-settings.table.prefix');
+
+        $this->prefix = $tablePrefix ? $tablePrefix.'_' : '';
+        $this->names  = config('laravel-settings.table.names');
+    }
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create(
+            $this->getTableName('settings'),
+            function (Blueprint $table) {
+                $table->increments('id');
+
+                $table->string('key')->unique();
+                $table->string('value');
+
+                $table->timestamps();
+            }
+        );
+    }
+
+    /**
+     * Get compiled table name with options
+     *
+     * @param String $key
+     *
+     * @return String
+     */
+    protected function getTableName(String $key): String
+    {
+        return $this->prefix.$this->names[$key];
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists($this->getTableName('settings'));
+    }
+}
